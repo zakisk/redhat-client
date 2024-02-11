@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redhat-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redhat
+  template:
+    metadata:
+      labels:
+        app: redhat
+    spec:
+      containers:
+      - name: redhat-container
+        image: zakisk/redhat:latest
+        ports:
+        - containerPort: 9254
