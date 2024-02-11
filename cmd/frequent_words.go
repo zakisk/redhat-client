@@ -6,6 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/zakisk/redhat-client/network"
+	"github.com/zakisk/redhat-client/utils"
 )
 
 var (
@@ -23,12 +24,16 @@ examples of command. For example:
 store freq-words -n 10
 `,
 	RunE: func(cmd *cobra.Command, args []string) error {
+		spinner := utils.CreateDefaultSpinner("Loading", "")
+		spinner.Start()
 		nc := network.NewNetworkCaller(&bytes.Buffer{})
 		resp, err := nc.GetFrequentWords(n, order)
 		if err != nil {
+			spinner.Stop()
 			return err
 		}
 
+		spinner.Stop()
 		for k, v := range resp.Words {
 			fmt.Printf("Word: %s\tOccurrence: %d\n", k, v)
 		}

@@ -49,5 +49,5 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.AddCommand(addCmd, deployCmd, frequentWordsCmd, listCmd, removeCmd, updateCmd)
+	rootCmd.AddCommand(addCmd, deployCmd, frequentWordsCmd, listCmd, removeCmd, updateCmd, wordCountCmd)
 }

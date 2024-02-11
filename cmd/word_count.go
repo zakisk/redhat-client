@@ -1,23 +1,38 @@
 package cmd
 
 import (
+	"bytes"
+	"fmt"
+
 	"github.com/spf13/cobra"
+	"github.com/zakisk/redhat-client/network"
+	"github.com/zakisk/redhat-client/utils"
 )
 
 var wordCountCmd = &cobra.Command{
-	Use:   "add",
-	Short: "Add uploads files to server",
+	Use:   "wc",
+	Short: "Counts words in all files on server",
 	Long: `
-examples of command. For example:
+example:
 	
-// upload two files to server
-store add file1.txt file2.txt
+store wc
 `,
-	Run: func(cmd *cobra.Command, args []string) {
-		
+	RunE: func(cmd *cobra.Command, args []string) error {
+		spinner := utils.CreateDefaultSpinner("Loading", "")
+		spinner.Start()
+		nc := network.NewNetworkCaller(&bytes.Buffer{})
+		resp, err := nc.GetWordsCount()
+		if err != nil {
+			spinner.Stop()
+			return err
+		}
+
+		fmt.Printf("\n%d unique words are found in %d files\n", resp.AllWordsCount, resp.AllFilesProcessed)
+		spinner.Stop()
+		return nil
 	},
 }
 
 func init() {
-	
+
 }
