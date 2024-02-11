@@ -73,3 +73,8 @@ func PrintToTable(header []string, data [][]string) {
 	table.AppendBulk(data) // The data in the table
 	table.Render()         // Render the table
 }
+
+func IsFileExist(fileName string) bool {
+	_, err := os.Stat(fileName)
+	return err == nil
+}

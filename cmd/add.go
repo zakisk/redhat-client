@@ -3,7 +3,6 @@ package cmd
 import (
 	"bytes"
 	"fmt"
-	"os"
 
 	"github.com/spf13/cobra"
 	"github.com/zakisk/redhat-client/network"
@@ -29,12 +28,6 @@ store add -f file1.txt -f file2.txt
 		nc := network.NewNetworkCaller(&bytes.Buffer{})
 		success, failed := 0, 0
 		for _, file := range files {
-			if !isFileExist(file) {
-				fmt.Printf("There is no such file `%s`\n", file)
-				failed++
-				continue
-			}
-
 			resp, err := nc.CreateFile(file)
 			if err != nil {
 				fmt.Printf("Error while uploading file\nerror: `%s`", err.Error())
@@ -51,9 +44,4 @@ store add -f file1.txt -f file2.txt
 
 func init() {
 	addCmd.Flags().StringArrayVarP(&files, "file", "f", []string{}, "Files to be uploaded on server")
-}
-
-func isFileExist(fileName string) bool {
-	_, err := os.Stat(fileName)
-	return err == nil
 }
