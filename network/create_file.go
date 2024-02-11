@@ -39,22 +39,11 @@ func (nc *NetworkCaller) CreateFile(fileName string) (*models.Response, error) {
 	}
 
 	url := fmt.Sprintf("http://localhost:%s/upload_file", port)
-	resp, err := utils.MakeRequest(
+	bodyBytes, err := utils.MakeRequest(
 		http.MethodPost, url, nc.body,
 		map[string]string{"Content-Type": writer.FormDataContentType()})
 	if err != nil {
 		return nil, fmt.Errorf("Unable to call api: %s", err.Error())
-	}
-
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("HTTP Error: Status Code: %d", resp.StatusCode)
-	}
-
-	bodyBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("IO Error: unable to read response body: %s", err.Error())
 	}
 
 	response := &models.Response{}

@@ -3,6 +3,7 @@ package utils
 import (
 	"bytes"
 	"fmt"
+	"io"
 	"net/http"
 	"time"
 
@@ -17,13 +18,20 @@ func CreateDefaultSpinner(suffix string, finalMsg string) *spinner.Spinner {
 	return s
 }
 
-func MakeRequest(method, url string, body *bytes.Buffer, headers map[string]string) (*http.Response, error) {
-	req, err := http.NewRequest(method, url, body)
+func MakeRequest(method, url string, body *bytes.Buffer, headers map[string]string) ([]byte, error) {
+	var reqBody io.Reader
+	if body != nil {
+		reqBody = body
+	}
+
+	req, err := http.NewRequest(method, url, reqBody)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to make request object: %s", err.Error())
 	}
-	for k, v := range headers {
-		req.Header.Set(k, v)
+	if headers != nil {
+		for k, v := range headers {
+			req.Header.Set(k, v)
+		}
 	}
 
 	client := &http.Client{}
@@ -32,5 +40,16 @@ func MakeRequest(method, url string, body *bytes.Buffer, headers map[string]stri
 		return nil, fmt.Errorf("Unable to call api: %s", err.Error())
 	}
 
-	return resp, nil
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("HTTP Error: Status Code: %d", resp.StatusCode)
+	}
+
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("IO Error: unable to read response body: %s", err.Error())
+	}
+
+	return bodyBytes, nil
 }

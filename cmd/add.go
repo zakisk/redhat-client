@@ -3,7 +3,6 @@ package cmd
 import (
 	"bytes"
 	"fmt"
-	"net/http"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -27,7 +26,7 @@ store add -f file1.txt -f file2.txt
 			return fmt.Errorf("arguments can't be empty, pass file names")
 		}
 
-		nc := network.NewNetworkCaller(&http.Client{}, &bytes.Buffer{})
+		nc := network.NewNetworkCaller(&bytes.Buffer{})
 		success, failed := 0, 0
 		for _, file := range files {
 			if !isFileExist(file) {
