@@ -33,7 +33,12 @@ store wc
 // list N most frequent words in order [asc | dsc]
 store freq-words [--limit|-n 10] [--order=dsc|asc]
 `,
-	Run: func(cmd *cobra.Command, args []string) {},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			return cmd.Help()
+		}
+		return nil
+	},
 }
 
 func Execute() {

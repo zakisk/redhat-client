@@ -22,28 +22,32 @@ var (
 
 var deployCmd = &cobra.Command{
 	Use:   "deploy",
-	Short: "Deploys server to platform P",
+	Short: "Deploys server to docker",
 	Long: `
 examples of command. For example:
 	
-// upload two files to server
-store deploy -p [docker | kubernetes]
+// deploy server on docker
+store deploy
+
+// deploy server on docker with different port
+store deploy -p 9967
 `,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		os.Setenv("PORT", port)
 		if err := deployOnDocker(); err != nil {
-			log.Fatal(err)
+			return err
 		}
+		return nil
 	},
 }
 
 func init() {
-	deployCmd.Flags().StringVarP(&port, "port", "p", "9254", "in which platform server should be deployed (default: docker)")
+	deployCmd.Flags().StringVarP(&port, "port", "p", "9254", "server port")
 }
 
 func deployOnDocker() error {
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
-	spinner := utils.CreateDefaultSpinner("Deploying on docker", "Deployed successfully")
+	spinner := utils.CreateDefaultSpinner("Deploying on docker\n", "Deployed successfully")
 	spinner.Start()
 	if err != nil {
 		spinner.Stop()
@@ -120,6 +124,6 @@ func deployOnDocker() error {
 		spinner.Stop()
 		return fmt.Errorf("Unabel to start container\n%s", err.Error())
 	}
-
+	spinner.Stop()
 	return nil
 }
