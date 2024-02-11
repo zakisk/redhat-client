@@ -44,8 +44,12 @@ func MakeRequest(method, url string, body *bytes.Buffer, headers map[string]stri
 
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("HTTP Error: Status Code: %d", resp.StatusCode)
+	if resp.StatusCode == http.StatusNotFound {
+		return nil, fmt.Errorf("HTTP Error: Resource not found")
+	}
+
+	if resp.StatusCode == http.StatusInternalServerError {
+		return nil, fmt.Errorf("HTTP Error: Something went wrong on server")
 	}
 
 	bodyBytes, err := io.ReadAll(resp.Body)
