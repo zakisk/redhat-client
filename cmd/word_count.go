@@ -26,9 +26,9 @@ store wc
 			spinner.Stop()
 			return err
 		}
-
-		fmt.Printf("\n%d unique words are found in %d files\n", resp.AllWordsCount, resp.AllFilesProcessed)
+		
 		spinner.Stop()
+		fmt.Printf("\n%d unique words are found in %d files\n", resp.AllWordsCount, resp.AllFilesProcessed)
 		return nil
 	},
 }
